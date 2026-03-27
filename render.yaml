@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: romm-server
+    env: image
+    imagePath: docker.io/rommapp/romm:latest
+    disk:
+      name: romm-persistent-data
+      mountPath: /romm
+      sizeGB: 15
+    envVars:
+      - key: ROMM_DB_DRIVER
+        value: sqlite
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: romm-cache
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: redis
+          name: romm-cache
+          property: port
+      - key: ROMM_AUTH_SECRET_KEY
+        generateValue: true
+      - key: IGDB_CLIENT_ID
+        sync: false 
+      - key: IGDB_CLIENT_SECRET
+        sync: false
+
+  - type: redis
+    name: romm-cache
+    ipAllowList: []
