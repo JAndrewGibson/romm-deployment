@@ -3,7 +3,7 @@ services:
     name: romm-server
     runtime: image
     image:
-      url: docker.io/rommapp/romm:latest
+      url: ghcr.io/rommapp/romm:latest
     plan: starter 
     disk:
       name: romm-persistent-data
