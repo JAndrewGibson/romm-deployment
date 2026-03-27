@@ -1,7 +1,7 @@
 services:
   # 1. THE MARIA DB DATABASE (Private Service)
   - type: pserv
-    name: romm-db
+    name: romm-db-6r06
     runtime: image
     image:
       url: docker.io/library/mariadb:10.11
@@ -42,12 +42,12 @@ services:
       - key: DB_HOST
         fromService:
           type: pserv
-          name: romm-db
+          name: romm-db-6r06
           property: host
       - key: DB_PORT
         fromService:
           type: pserv
-          name: romm-db
+          name: romm-db-6r06
           property: port
       - key: DB_NAME
         value: romm
@@ -56,7 +56,7 @@ services:
       - key: DB_PASSWD
         fromService:
           type: pserv
-          name: romm-db
+          name: romm-db-6r06
           envVarKey: MARIADB_PASSWORD
       
       # REDIS HANDSHAKE
