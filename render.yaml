@@ -4,6 +4,7 @@ services:
     runtime: image
     image:
       url: docker.io/rommapp/romm:latest
+    plan: starter 
     disk:
       name: romm-persistent-data
       mountPath: /romm
@@ -13,12 +14,12 @@ services:
         value: sqlite
       - key: REDIS_HOST
         fromService:
-          type: redis
+          type: keyvalue
           name: romm-cache
           property: host
       - key: REDIS_PORT
         fromService:
-          type: redis
+          type: keyvalue
           name: romm-cache
           property: port
       - key: ROMM_AUTH_SECRET_KEY
@@ -28,6 +29,7 @@ services:
       - key: IGDB_CLIENT_SECRET
         sync: false
 
-  - type: redis
+  - type: keyvalue
     name: romm-cache
+    plan: free 
     ipAllowList: []
