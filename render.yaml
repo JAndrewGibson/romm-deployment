@@ -85,7 +85,7 @@ services:
       - key: ROMM_ASSETS_PATH
         value: /romm_data/assets
       - key: ROMM_CONFIG_PATH
-        value: /romm_data/config/config.yml
+        value: /romm_data/config/config.yaml
 
       # IGDB CREDENTIALS (Syncing from your Dashboard)
       - key: IGDB_CLIENT_ID
