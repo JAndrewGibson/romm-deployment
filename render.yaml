@@ -31,5 +31,5 @@ services:
 
   - type: keyvalue
     name: romm-cache
-    plan: free 
+    plan: starter 
     ipAllowList: []
