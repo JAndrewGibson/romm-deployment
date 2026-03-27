@@ -1,8 +1,9 @@
 services:
   - type: web
     name: romm-server
-    env: image
-    imagePath: docker.io/rommapp/romm:latest
+    runtime: image
+    image:
+      url: docker.io/rommapp/romm:latest
     disk:
       name: romm-persistent-data
       mountPath: /romm
