@@ -1,0 +1,4 @@
+# This is a skeleton config to allow RomM to boot
+# Environmental variables in Render will override these
+database:
+  driver: mariadb
