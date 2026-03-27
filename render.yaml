@@ -1,5 +1,5 @@
 services:
-  # 1. The MariaDB Database (Private Service)
+  # 1. THE MARIA DB DATABASE (Private Service)
   - type: pserv
     name: romm-db
     runtime: image
@@ -20,13 +20,13 @@ services:
       - key: MARIADB_PASSWORD
         generateValue: true
 
-  # 2. The Redis Cache
-  - type: redis
+  # 2. THE REDIS CACHE (Required for RomM v3+)
+  - type: keyvalue
     name: romm-cache
-    plan: starter
+    plan: free
     ipAllowList: []
 
-  # 3. The RomM Web Server
+  # 3. THE ROMM WEB SERVER
   - type: web
     name: romm-server
     runtime: image
@@ -35,17 +35,10 @@ services:
     plan: starter
     disk:
       name: romm-persistent-data
-      mountPath: /romm_data
+      mountPath: /romm_data # This path MUST be unique to avoid 404s
       sizeGB: 15
     envVars:
-      - key: ROMM_CONFIG_PATH
-        value: /opt/render/project/src/config/config.yaml
-      - key: ROMM_BASE_PATH
-        value: /romm_data/library
-      - key: ROMM_ASSETS_PATH
-        value: /romm_data/assets
-      - key: ROMM_BASE_URL
-        value: https://romm-server-6r06.onrender.com/
+      # DATABASE HANDSHAKE
       - key: DB_HOST
         fromService:
           type: pserv
@@ -65,18 +58,36 @@ services:
           type: pserv
           name: romm-db
           envVarKey: MARIADB_PASSWORD
+      
+      # REDIS HANDSHAKE
       - key: REDIS_HOST
         fromService:
-          type: redis
+          type: keyvalue
           name: romm-cache
           property: host
       - key: REDIS_PORT
         fromService:
-          type: redis
+          type: keyvalue
           name: romm-cache
           property: port
+
+      # ROMM SPECIFIC CONFIG
+      - key: ROMM_DB_DRIVER
+        value: mariadb
       - key: ROMM_AUTH_SECRET_KEY
         generateValue: true
+      - key: ROMM_BASE_URL
+        value: https://romm-server-6r06.onrender.com
+      
+      # DATA PATHS (Points to the persistent disk)
+      - key: ROMM_BASE_PATH
+        value: /romm_data/library
+      - key: ROMM_ASSETS_PATH
+        value: /romm_data/assets
+      - key: ROMM_CONFIG_PATH
+        value: /romm_data/config/config.yml
+
+      # IGDB CREDENTIALS (Syncing from your Dashboard)
       - key: IGDB_CLIENT_ID
         sync: false 
       - key: IGDB_CLIENT_SECRET
