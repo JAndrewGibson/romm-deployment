@@ -35,15 +35,17 @@ services:
     plan: starter
     disk:
       name: romm-persistent-data
-      mountPath: /romm/resources
+      mountPath: /romm_data
       sizeGB: 15
     envVars:
       - key: ROMM_CONFIG_PATH
-        value: /opt/render/project/src/config/config.yml
+        value: /opt/render/project/src/config/config.yaml
       - key: ROMM_BASE_PATH
-        value: /romm/resources
+        value: /romm_data/library
+      - key: ROMM_ASSETS_PATH
+        value: /romm_data/assets
       - key: ROMM_BASE_URL
-        value: https://romm-server-6r06.onrender.com
+        value: https://romm-server-6r06.onrender.com/
       - key: DB_HOST
         fromService:
           type: pserv
