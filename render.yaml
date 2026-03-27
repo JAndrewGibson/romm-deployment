@@ -1,93 +1,88 @@
 services:
-  # 1. THE MARIA DB DATABASE (Private Service)
+  # 1. THE MARIA DB DATABASE (Persistent & Private)
   - type: pserv
-    name: romm-db-6r06
+    name: romm-db-prod
     runtime: image
     image:
       url: docker.io/library/mariadb:10.11
     plan: starter
     disk:
-      name: mariadb-data
+      name: mariadb-storage-prod
       mountPath: /var/lib/mysql
       sizeGB: 5
     envVars:
       - key: MARIADB_ROOT_PASSWORD
-        generateValue: true
+        value: prod_root_secure_999
       - key: MARIADB_DATABASE
         value: romm
       - key: MARIADB_USER
-        value: romm
+        value: romm_admin
       - key: MARIADB_PASSWORD
-        generateValue: true
+        value: prod_user_secure_888
 
-  # 2. THE REDIS CACHE (Required for RomM v3+)
+  # 2. THE REDIS CACHE
   - type: keyvalue
-    name: romm-cache
+    name: romm-cache-prod
     plan: starter
     ipAllowList: []
 
-  # 3. THE ROMM WEB SERVER
+  # 3. THE ROMM WEB SERVER (The Brain)
   - type: web
-    name: romm-server
+    name: romm-server-prod
     runtime: image
     image:
       url: ghcr.io/rommapp/romm:latest
     plan: starter
     disk:
-      name: romm-persistent-data
-      mountPath: /romm_data # This path MUST be unique to avoid 404s
-      sizeGB: 15
+      name: romm-library-prod
+      mountPath: /romm_data
+      sizeGB: 50 # Increased for your collection
     envVars:
+      - key: PORT
+        value: 8080
       # DATABASE HANDSHAKE
       - key: DB_HOST
         fromService:
           type: pserv
-          name: romm-db-6r06
+          name: romm-db-prod
           property: host
       - key: DB_PORT
         fromService:
           type: pserv
-          name: romm-db-6r06
+          name: romm-db-prod
           property: port
       - key: DB_NAME
         value: romm
       - key: DB_USER
-        value: romm
+        value: romm_admin
       - key: DB_PASSWD
-        fromService:
-          type: pserv
-          name: romm-db-6r06
-          envVarKey: MARIADB_PASSWORD
+        value: prod_user_secure_888
       
       # REDIS HANDSHAKE
       - key: REDIS_HOST
         fromService:
           type: keyvalue
-          name: romm-cache
+          name: romm-cache-prod
           property: host
       - key: REDIS_PORT
         fromService:
           type: keyvalue
-          name: romm-cache
+          name: romm-cache-prod
           property: port
 
-      # ROMM SPECIFIC CONFIG
+      # ROMM CONFIGURATION
       - key: ROMM_DB_DRIVER
         value: mariadb
       - key: ROMM_AUTH_SECRET_KEY
         generateValue: true
       - key: ROMM_BASE_URL
-        value: https://romm-server-6r06.onrender.com
-      
-      # DATA PATHS (Points to the persistent disk)
+        value: https://romm-server-prod.onrender.com
       - key: ROMM_BASE_PATH
         value: /romm_data/library
       - key: ROMM_ASSETS_PATH
         value: /romm_data/assets
-      - key: ROMM_CONFIG_PATH
-        value: /romm_data/config/config.yaml
-
-      # IGDB CREDENTIALS (Syncing from your Dashboard)
+      
+      # IGDB CREDENTIALS (Syncing from Dashboard)
       - key: IGDB_CLIENT_ID
         sync: false 
       - key: IGDB_CLIENT_SECRET
