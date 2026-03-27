@@ -1,25 +1,70 @@
 services:
+  # 1. The MariaDB Database (Private Service)
+  - type: pserv
+    name: romm-db
+    runtime: image
+    image:
+      url: docker.io/library/mariadb:10.11
+    plan: starter
+    disk:
+      name: mariadb-data
+      mountPath: /var/lib/mysql
+      sizeGB: 5
+    envVars:
+      - key: MARIADB_ROOT_PASSWORD
+        generateValue: true
+      - key: MARIADB_DATABASE
+        value: romm
+      - key: MARIADB_USER
+        value: romm
+      - key: MARIADB_PASSWORD
+        generateValue: true
+
+  # 2. The Redis Cache
+  - type: redis
+    name: romm-cache
+    plan: starter
+    ipAllowList: []
+
+  # 3. The RomM Web Server
   - type: web
     name: romm-server
     runtime: image
     image:
       url: ghcr.io/rommapp/romm:latest
-    plan: starter 
+    plan: starter
     disk:
       name: romm-persistent-data
       mountPath: /romm
       sizeGB: 15
     envVars:
-      - key: ROMM_DB_DRIVER
-        value: sqlite
+      - key: DB_HOST
+        fromService:
+          type: pserv
+          name: romm-db
+          property: host
+      - key: DB_PORT
+        fromService:
+          type: pserv
+          name: romm-db
+          property: port
+      - key: DB_NAME
+        value: romm
+      - key: DB_USER
+        value: romm
+      - key: DB_PASSWD
+        fromService:
+          type: pserv
+          name: romm-db
+          envVarKey: MARIADB_PASSWORD
       - key: REDIS_HOST
         fromService:
-          type: keyvalue
+          type: redis
           name: romm-cache
           property: host
       - key: REDIS_PORT
         fromService:
-          type: keyvalue
+          type: redis
           name: romm-cache
           property: port
       - key: ROMM_AUTH_SECRET_KEY
@@ -28,8 +73,3 @@ services:
         sync: false 
       - key: IGDB_CLIENT_SECRET
         sync: false
-
-  - type: keyvalue
-    name: romm-cache
-    plan: starter 
-    ipAllowList: []
