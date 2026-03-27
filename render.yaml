@@ -23,7 +23,7 @@ services:
   # 2. THE REDIS CACHE (Required for RomM v3+)
   - type: keyvalue
     name: romm-cache
-    plan: free
+    plan: starter
     ipAllowList: []
 
   # 3. THE ROMM WEB SERVER
