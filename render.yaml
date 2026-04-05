@@ -29,9 +29,9 @@ services:
   # 3. THE ROMM WEB SERVER (The Brain)
   - type: web
     name: romm-server-prod
-    runtime: image
-    image:
-      url: ghcr.io/rommapp/romm:latest
+    runtime: docker
+    repo: https://github.com/JAndrewGibson/romm
+    branch: main
     plan: starter
     disk:
       name: romm-library-prod
