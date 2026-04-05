@@ -34,7 +34,7 @@ services:
     branch: friends
     plan: starter
     dockerContext: .
-    dockerfile: docker/Dockerfile
+    dockerfilePath: docker/Dockerfile
     disk:
       name: romm-library-prod
       mountPath: /romm_data
