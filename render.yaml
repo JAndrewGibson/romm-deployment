@@ -80,7 +80,7 @@ services:
       - key: ROMM_BASE_URL
         value: https://romm-server-prod.onrender.com
       - key: ROMM_BASE_PATH
-        value: /romm_data
+        value: /romm_data/library
 
       - key: ROMM_ASSETS_PATH
         value: /romm_data/assets
