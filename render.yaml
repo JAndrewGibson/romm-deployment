@@ -31,7 +31,7 @@ services:
     name: romm-server-prod
     runtime: docker
     repo: https://github.com/JAndrewGibson/romm
-    branch: main
+    branch: master
     plan: starter
     disk:
       name: romm-library-prod
