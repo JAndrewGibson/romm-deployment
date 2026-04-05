@@ -31,8 +31,10 @@ services:
     name: romm-server-prod
     runtime: docker
     repo: https://github.com/JAndrewGibson/romm
-    branch: master
+    branch: friends
     plan: starter
+    dockerContext: .
+    dockerfile: docker/Dockerfile
     disk:
       name: romm-library-prod
       mountPath: /romm_data
